@@ -1,0 +1,30 @@
+{
+  "type": "module",
+  "scripts": {
+    "start": "concurrently --kill-others-on-fail npm:start:typescript npm:start:nodemon",
+    "start:typescript": "tsc --watch --preserveWatchOutput",
+    "start:nodemon": "nodemon --watch lib lib/entrypoint.js",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@discordjs/voice": "^0.6.0",
+    "@google-cloud/speech": "^4.9.0",
+    "debug": "^4.3.2",
+    "discord.js": "^13.2.0",
+    "dotenv": "^10.0.0",
+    "ffmpeg-static": "^4.4.0",
+    "isomorphic-fetch": "^3.0.0",
+    "node-crc": "^2.0.11",
+    "opusscript": "^0.0.8",
+    "prism-media": "^2.0.0-alpha.0",
+    "source-map-support": "^0.5.19",
+    "tweetnacl": "^1.0.3"
+  },
+  "devDependencies": {
+    "@types/debug": "^4.1.7",
+    "@types/node": "^16.7.4",
+    "concurrently": "^6.2.1",
+    "nodemon": "^2.0.12",
+    "typescript": "^4.4.2"
+  }
+}
