@@ -1,6 +1,8 @@
 import 'source-map-support/register.js'
 import 'dotenv/config'
 import 'isomorphic-fetch'
+import './patch-global-require.js'
+import '@discordjs/voice' // side-effects?
 import Discord from 'discord.js'
 import { once } from 'events'
 import { DISCORD_GUILD_ID, DISCORD_TOKEN, DISCORD_VOICE_CHANNEL_ID } from './environment.js'
@@ -25,10 +27,6 @@ client.login(DISCORD_TOKEN)
 
 await once(client, 'ready')
 
-console.log(
-  client.generateInvite({ scopes: ['bot'], permissions: [Discord.Permissions.FLAGS.CONNECT] })
-)
-
 const guild = await client.guilds.fetch(DISCORD_GUILD_ID)
 const voiceChannel = await guild.channels.fetch(DISCORD_VOICE_CHANNEL_ID)
 const voiceConnection = joinVoiceChannel({
@@ -39,12 +37,12 @@ const voiceConnection = joinVoiceChannel({
   adapterCreator: voiceChannel!.guild.voiceAdapterCreator as DiscordGatewayAdapterCreator,
 })
 
-// await entersState(voiceConnection, VoiceConnectionStatus.Ready, 1000 * 30)
-
 await Promise.race([
   entersState(voiceConnection, VoiceConnectionStatus.Signalling, 1000 * 5),
   entersState(voiceConnection, VoiceConnectionStatus.Connecting, 1000 * 5),
 ])
+
+await entersState(voiceConnection, VoiceConnectionStatus.Ready, 1000 * 30)
 
 handleVoiceConnection(voiceConnection, async (userId, text) => {
   const user = await guild.members.fetch(userId)
@@ -55,3 +53,7 @@ handleVoiceConnection(voiceConnection, async (userId, text) => {
     content: text,
   })
 })
+
+console.log(
+  client.generateInvite({ scopes: ['bot'], permissions: [Discord.Permissions.FLAGS.CONNECT] })
+)
